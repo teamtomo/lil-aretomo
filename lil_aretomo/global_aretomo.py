@@ -50,7 +50,8 @@ def run_aretomo_global_alignment(
         tilt_series_file=tilt_series_file,
         imod_directory=output_directory,
 	binning=binning,
-        exe=exe
+        exe=exe,
+	nominal_rotation_angle=nominal_rotation_angle
     )
 
 

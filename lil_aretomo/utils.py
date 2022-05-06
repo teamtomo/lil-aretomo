@@ -30,7 +30,8 @@ def run_batchrun(
         tilt_series_file: Path, 
         imod_directory: Path, 
         binning: float,
-        exe: Path	
+        exe: Path,
+	nominal_rotation_angle: bool or float	
 ):
         
     #Rename file .mrc if .st    
@@ -46,10 +47,14 @@ def run_batchrun(
         '-OutMrc', f'{output_file_name}', 
         '-OutBin', f'{binning}',
         '-AngFile', f'{imod_directory}/{tilt_series_file.stem}.rawtlt',
-        '-VolZ', f'0',
-        '-OutXF', f'1'
+        '-VolZ', '0',
+        '-OutXF', '1'
     ]
-    print(aretomo_command)
+    
+    if not nominal_rotation_angle == None:
+        aretomo_command.append('-TiltAxis')
+        aretomo_command.append(f'{nominal_rotation_angle}')
+    
     subprocess.run(aretomo_command)
 
     #Rename .tlt
