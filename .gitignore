@@ -5,3 +5,5 @@ test/
 *.st
 *.tlt
 *.rawtlt
+*.aln
+*.xf

@@ -37,7 +37,7 @@ def run_batchrun(
     if tilt_series_file.suffix == '.st':
          tilt_series_file = tilt_series_file.with_suffix('.mrc')
     
-    output_file_name = Path(f'{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
+    output_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
             
 	#Run Global AreTomo
     aretomo_command = [
@@ -45,16 +45,17 @@ def run_batchrun(
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{output_file_name}', 
         '-OutBin', f'{binning}',
-        '-AngFile', f'{tilt_series_file.parent}/{tilt_series_file.stem}.rawtlt',
+        '-AngFile', f'{imod_directory}/{tilt_series_file.stem}.rawtlt',
         '-VolZ', f'0',
         '-OutXF', f'1'
     ]
+    print(aretomo_command)
     subprocess.run(aretomo_command)
 
     #Rename .tlt
-    tlt_file_name = Path(f'{tilt_series_file.stem}_aln.tlt')
+    tlt_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln.tlt')
     new_tlt_stem = tlt_file_name.stem[:-4]
-    new_output_name_tlt = Path(new_tlt_stem).with_suffix('.tlt')
+    new_output_name_tlt = Path(f'{imod_directory}/{new_tlt_stem}').with_suffix('.tlt')
     tlt_file_name.rename(new_output_name_tlt)
 	
 #####
