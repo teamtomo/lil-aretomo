@@ -1,3 +1,7 @@
 lil_aretomo.egg-info
 test/
-.eggs
+.eggs/
+*.mrc
+*.st
+*.tlt
+*.rawtlt

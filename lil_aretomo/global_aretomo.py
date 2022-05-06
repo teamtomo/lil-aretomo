@@ -1,12 +1,13 @@
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, Tuple, List, Optional
+import typer
 
 import subprocess
 
-from .utils import (
-    prepare_imod_directory
-    run_batchrun
+from utils import (
+    prepare_imod_directory,
+    run_batchrun,
     find_binning_factor
 )
 
@@ -17,8 +18,8 @@ def run_aretomo_global_alignment(
         pixel_size: float,
         output_directory: Path,
 	exe: Path,
-        target_pixel_size: Optional[float] = typer.Argument(10)
-	nominal_rotation_angle: Optional[float] = typer.Argument(None)
+        target_pixel_size: Optional[float] = 10,
+	nominal_rotation_angle: Optional[float] = None
 ):
     """Run aretomo alignment on a single tilt-series
     
@@ -41,14 +42,15 @@ def run_aretomo_global_alignment(
     )
     
     binning=find_binning_factor(
-        pixel_size=pixel_size
+        pixel_size=pixel_size,
         target_pixel_size=target_pixel_size
     )
     
     run_batchrun(
         tilt_series_file=tilt_series_file,
-        imod_directory=output_directory
-	binning=binning
+        imod_directory=output_directory,
+	binning=binning,
+        exe=exe
     )
 
 
