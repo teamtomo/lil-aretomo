@@ -5,7 +5,7 @@ import typer
 
 import subprocess
 
-from utils import (
+from .utils import (
     prepare_imod_directory,
     run_batchrun,
     find_binning_factor

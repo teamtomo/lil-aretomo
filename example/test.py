@@ -1,5 +1,5 @@
 from pathlib import Path
-from global_aretomo import run_aretomo_global_alignment
+from lil_aretomo.global_aretomo import run_aretomo_global_alignment
 
 import numpy as np
 
