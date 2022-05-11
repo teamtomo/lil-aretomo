@@ -31,7 +31,10 @@ def run_batchrun(
         imod_directory: Path, 
         binning: float,
         exe: Path,
-	nominal_rotation_angle: bool or float	
+	    nominal_rotation_angle: bool or float,
+        local_align: bool,
+        patch_in_x: float,
+        patch_in_y: float
 ):
         
     #Rename file .mrc if .st    
@@ -40,7 +43,7 @@ def run_batchrun(
     
     output_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
             
-	#Run Global AreTomo
+	#Run AreTomo
     aretomo_command = [
         f'{str(exe)}',
         '-InMrc', f'{tilt_series_file}',
@@ -54,6 +57,11 @@ def run_batchrun(
     if not nominal_rotation_angle == None:
         aretomo_command.append('-TiltAxis')
         aretomo_command.append(f'{nominal_rotation_angle}')
+    
+    if local_align:
+        aretomo_command.append('-Patch')
+        aretomo_command.append(f'{patch_in_x}')
+        aretomo_command.append(f'{patch_in_y}')
     
     subprocess.run(aretomo_command)
 
