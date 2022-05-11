@@ -63,5 +63,5 @@ def run_aretomo_alignment(
 	    nominal_rotation_angle=nominal_rotation_angle,
         local_align=local_align,
         patch_in_x=patch_in_x,
-        patch_in_y=_patch_in_y
+        patch_in_y=patch_in_y
     )
