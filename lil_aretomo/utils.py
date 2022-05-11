@@ -34,7 +34,8 @@ def run_batchrun(
 	    nominal_rotation_angle: bool or float,
         local_align: bool,
         patch_in_x: float,
-        patch_in_y: float
+        patch_in_y: float,
+        correct_tilt_angle_offset: bool
 ):
         
     #Rename file .mrc if .st    
@@ -63,6 +64,10 @@ def run_batchrun(
         aretomo_command.append(f'{patch_in_x}')
         aretomo_command.append(f'{patch_in_y}')
     
+    if correct_tilt_angle_offset:
+        aretomo_command.append('-TiltCor')
+        aretomo_command.append('1')
+        
     subprocess.run(aretomo_command)
 
     #Rename .tlt

@@ -23,7 +23,8 @@ def run_aretomo_alignment(
         target_pixel_size: Optional[float] = 10,
 	    nominal_rotation_angle: Optional[float] = None,
         patch_in_x: Optional[float] = 5,
-        patch_in_y: Optional[float] = 4
+        patch_in_y: Optional[float] = 4,
+        correct_tilt_angle_offset: Optional[bool] = False
 ):
     """Run aretomo alignment on a single tilt-series
     
@@ -42,6 +43,9 @@ def run_aretomo_alignment(
     (optional) patch_in_x: if local_align is True, AreTomo will carry out patch tracking. 
     Specify the number of patches in X here. Default is 5.
     (optional) patch_in_y: same as above, but in Y. Default is 4. 
+    (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
+    Default is no. See AreTomo manual for full explanation: yes adds the -TiltCor 1 argument.
+    
     """
 
     prepare_imod_directory(
@@ -63,5 +67,6 @@ def run_aretomo_alignment(
 	    nominal_rotation_angle=nominal_rotation_angle,
         local_align=local_align,
         patch_in_x=patch_in_x,
-        patch_in_y=patch_in_y
+        patch_in_y=patch_in_y,
+        correct_tilt_angle_offset=correct_tilt_angle_offset
     )
