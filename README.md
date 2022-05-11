@@ -4,6 +4,10 @@ im not a (w)rapper
 
 see the script in example directory for the kind of input script you need to run this.
 
+To install, type:
+pip install lil_aretomo
+
+
     Parameters
     ----------
 
