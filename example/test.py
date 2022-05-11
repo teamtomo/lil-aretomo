@@ -1,11 +1,11 @@
 from pathlib import Path
-from lil_aretomo.global_aretomo import run_aretomo_global_alignment
+from lil_aretomo.aretomo import run_aretomo_alignment
 
 import numpy as np
 
 TEST_DATA_DIR = Path(__file__).parent.parent / 'test'
 
-run_aretomo_global_alignment(
+run_aretomo_alignment(
     tilt_series_file=TEST_DATA_DIR / 'TS_121.st',
     tilt_angles=np.arange(-42,51,3),
     pixel_size=1.329,

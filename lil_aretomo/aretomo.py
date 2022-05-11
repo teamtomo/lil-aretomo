@@ -12,7 +12,7 @@ from .utils import (
 )
 
 
-def run_aretomo_global_alignment(
+def run_aretomo_alignment(
         tilt_series_file: Path,
         tilt_angles: List[float],
         pixel_size: float,
