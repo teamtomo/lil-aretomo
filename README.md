@@ -25,3 +25,4 @@ pip install lil_aretomo
     (optional) n_patches_y: same as above, but in Y. Default is 4.
     (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
     Default is no. See AreTomo manual for full explanation: yes adds the -TiltCor 1 argument.
+    (optional) thickness_for_alignment: Specify AlignZ value. Default is 800.
