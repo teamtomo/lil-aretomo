@@ -14,5 +14,6 @@ run_aretomo_alignment(
     local_align=True,
     n_patches_x=6,
     n_patches_y=4,
+    thickness_for_alignment=600,
     correct_tilt_angle_offset=True
 )

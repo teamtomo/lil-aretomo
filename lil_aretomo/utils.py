@@ -35,7 +35,8 @@ def align_tilt_series_aretomo(
         local_align: bool,
         n_patches_x: float,
         n_patches_y: float,
-        correct_tilt_angle_offset: bool
+        correct_tilt_angle_offset: bool,
+        thickness_for_alignment: float	
 ):
         
     #Rename file .mrc if .st    
@@ -51,6 +52,7 @@ def align_tilt_series_aretomo(
         '-OutMrc', f'{output_file_name}', 
         '-OutBin', f'{binning}',
         '-AngFile', f'{imod_directory}/{tilt_series_file.stem}.rawtlt',
+        '-AlignZ', f'{thickness_for_alignment}',	
         '-VolZ', '0',
         '-OutXF', '1'
     ]

@@ -24,7 +24,8 @@ def run_aretomo_alignment(
 	    nominal_rotation_angle: Optional[float] = None,
         n_patches_x: Optional[float] = 5,
         n_patches_y: Optional[float] = 4,
-        correct_tilt_angle_offset: Optional[bool] = False
+        correct_tilt_angle_offset: Optional[bool] = False,
+        thickness_for_alignment: Optional[float] = 800	
 ):
     """Run aretomo alignment on a single tilt-series
     
@@ -45,7 +46,9 @@ def run_aretomo_alignment(
     (optional) n_patches_y: same as above, but in Y. Default is 4. 
     (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
     Default is no. See AreTomo manual for full explanation: yes adds the -TiltCor 1 argument.
-    
+    (optional) thickness_for_alignment: thickness in Z in unbinned pixels for which AreTomo will use in the alignment.
+    This is useful is there is a lot of empty space at the top and bottom of your tomogram.
+    See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
     """
 
     prepare_imod_directory(
@@ -68,5 +71,6 @@ def run_aretomo_alignment(
         local_align=local_align,
         n_patches_x=n_patches_x,
         n_patches_y=n_patches_y,
-        correct_tilt_angle_offset=correct_tilt_angle_offset
+        correct_tilt_angle_offset=correct_tilt_angle_offset,
+        thickness_for_alignment=thickness_for_alignment	
     )
