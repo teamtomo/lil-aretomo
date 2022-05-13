@@ -26,15 +26,15 @@ def prepare_imod_directory(
     
 #####
 
-def run_batchrun(
+def align_tilt_series_aretomo(
         tilt_series_file: Path, 
         imod_directory: Path, 
         binning: float,
-        exe: Path,
+        aretomo_executable: Path,
 	    nominal_rotation_angle: bool or float,
         local_align: bool,
-        patch_in_x: float,
-        patch_in_y: float,
+        n_patches_x: float,
+        n_patches_y: float,
         correct_tilt_angle_offset: bool
 ):
         
@@ -46,7 +46,7 @@ def run_batchrun(
             
 	#Run AreTomo
     aretomo_command = [
-        f'{str(exe)}',
+        f'{str(aretomo_executable)}',
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{output_file_name}', 
         '-OutBin', f'{binning}',
@@ -61,8 +61,8 @@ def run_batchrun(
     
     if local_align:
         aretomo_command.append('-Patch')
-        aretomo_command.append(f'{patch_in_x}')
-        aretomo_command.append(f'{patch_in_y}')
+        aretomo_command.append(f'{n_patches_x}')
+        aretomo_command.append(f'{n_patches_y}')
     
     if correct_tilt_angle_offset:
         aretomo_command.append('-TiltCor')
