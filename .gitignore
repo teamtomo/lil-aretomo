@@ -8,3 +8,5 @@ test/
 *.aln
 *.xf
 *__pycache__*
+dist
+dist/*
