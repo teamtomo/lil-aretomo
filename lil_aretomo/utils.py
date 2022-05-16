@@ -33,8 +33,7 @@ def align_tilt_series_aretomo(
         aretomo_executable: Path,
 	    nominal_rotation_angle: bool or float,
         local_align: bool,
-        n_patches_x: float,
-        n_patches_y: float,
+        n_patches_xy: tuple[int,int],
         correct_tilt_angle_offset: bool,
         thickness_for_alignment: float	
 ):
@@ -63,8 +62,8 @@ def align_tilt_series_aretomo(
     
     if local_align:
         aretomo_command.append('-Patch')
-        aretomo_command.append(f'{n_patches_x}')
-        aretomo_command.append(f'{n_patches_y}')
+        aretomo_command.append(f'{n_patches_xy[0]}')
+        aretomo_command.append(f'{n_patches_xy[1]}')
     
     if correct_tilt_angle_offset:
         aretomo_command.append('-TiltCor')

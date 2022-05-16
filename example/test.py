@@ -12,8 +12,7 @@ run_aretomo_alignment(
     output_directory=TEST_DATA_DIR / 'output',
     aretomo_executable='/s/ems/s/AreTomo/v1.1.0/AreTomo_1.1.0_Cuda114_03-24-2022',
     local_align=True,
-    n_patches_x=6,
-    n_patches_y=4,
+    #n_patches_xy=(5,6),
     thickness_for_alignment=600,
     correct_tilt_angle_offset=True
 )

@@ -22,8 +22,7 @@ def run_aretomo_alignment(
         local_align: Optional[bool] = False,
         target_pixel_size: Optional[float] = 10,
 	    nominal_rotation_angle: Optional[float] = None,
-        n_patches_x: Optional[float] = 5,
-        n_patches_y: Optional[float] = 4,
+        n_patches_xy: Optional[tuple[int,int]] = (5,4),
         correct_tilt_angle_offset: Optional[bool] = False,
         thickness_for_alignment: Optional[float] = 800	
 ):
@@ -41,9 +40,8 @@ def run_aretomo_alignment(
     (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
     (optional) nominal_rotation_angle: initial estimate for the rotation angle of the tilt
     axis. AreTomo does not need this information but it might help.
-    (optional) n_patches_x: if local_align is True, AreTomo will carry out patch tracking. 
-    Specify the number of patches in X here. Default is 5.
-    (optional) n_patches_y: same as above, but in Y. Default is 4. 
+    (optional) n_patches_xy: if local_align is True, AreTomo will carry out patch tracking. 
+    Specify the number of patches in X and Y here as tuple. Default is 5 in X,4 in Y.
     (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
     Default is no. See AreTomo manual for full explanation: yes adds the -TiltCor 1 argument.
     (optional) thickness_for_alignment: thickness in Z in unbinned pixels for which AreTomo will use in the alignment.
@@ -69,8 +67,7 @@ def run_aretomo_alignment(
         aretomo_executable=aretomo_executable,
 	    nominal_rotation_angle=nominal_rotation_angle,
         local_align=local_align,
-        n_patches_x=n_patches_x,
-        n_patches_y=n_patches_y,
+        n_patches_xy=n_patches_xy,
         correct_tilt_angle_offset=correct_tilt_angle_offset,
         thickness_for_alignment=thickness_for_alignment	
     )
