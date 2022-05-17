@@ -1,8 +1,8 @@
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from typing import List
-import shutil
 
 import numpy as np
 
