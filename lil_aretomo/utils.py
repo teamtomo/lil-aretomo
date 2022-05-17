@@ -6,22 +6,20 @@ from typing import List, Dict
 
 import numpy as np
 
-def prepare_imod_directory(
+def prepare_output_directory(
         tilt_series_file: Path, 
         tilt_angles: List[float], 
-        imod_directory: Path
+        output_directory: Path
 ):
     ts_dir_name = tilt_series_file.stem
-    imod_directory.mkdir(exist_ok=True, parents=True)
-    
-    #Rename file .mrc if .st    
-    if tilt_series_file.suffix == '.st':
-         tilt_series_file = tilt_series_file.with_suffix('.mrc')
+    output_directory.mkdir(exist_ok=True, parents=True)
 
-    tilt_series_file_for_imod = imod_directory / tilt_series_file.name
-    force_symlink(tilt_series_file.absolute(), tilt_series_file_for_imod)
+    # Link tilt-series file into output directory
+    tilt_series_filename = tilt_series_file.with_suffix('.mrc').name
+    linked_tilt_series_file = output_directory / tilt_series_filename
+    force_symlink(tilt_series_file.absolute(), linked_tilt_series_file)
 
-    rawtlt_file = imod_directory / f'{ts_dir_name}.rawtlt'
+    rawtlt_file = output_directory / f'{ts_dir_name}.rawtlt'
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
     
 #####
