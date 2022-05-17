@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 from typing import List
+import shutil
 
 import numpy as np
 
@@ -77,13 +78,11 @@ def align_tilt_series_aretomo(
     tlt_file_name.rename(new_output_name_tlt)
 
 
-#####
-
 def find_binning_factor(
         pixel_size: float,
         target_pixel_size: float
 ) -> int:
-    # Find closest IMOD binning to reach target pixel size
+    """Find closest power of two binning factor to reach target pixel size."""
     factors = 2 ** np.arange(7)
     binned_pixel_sizes = factors * pixel_size
     delta_pixel = np.abs(binned_pixel_sizes - target_pixel_size)
@@ -91,10 +90,13 @@ def find_binning_factor(
     return binning
 
 
-#####
-
 def force_symlink(src: Path, link_name: Path):
     """Force creation of a symbolic link, removing any existing file."""
     if link_name.exists():
         os.remove(link_name)
     os.symlink(src, link_name)
+
+
+def check_for_existing_aretomo_installation():
+    """Check for an installation of AreTomo on the PATH."""
+    return shutil.which('AreTomo') is not None
