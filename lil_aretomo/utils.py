@@ -97,6 +97,6 @@ def force_symlink(src: Path, link_name: Path):
     os.symlink(src, link_name)
 
 
-def check_for_existing_aretomo_installation():
+def check_aretomo_availability():
     """Check for an installation of AreTomo on the PATH."""
     return shutil.which('AreTomo') is not None

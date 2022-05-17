@@ -4,7 +4,8 @@ from typing import List, Optional
 from .utils import (
     prepare_imod_directory,
     align_tilt_series_aretomo,
-    find_binning_factor
+    find_binning_factor,
+    check_aretomo_availability,
 )
 
 
@@ -13,7 +14,7 @@ def run_aretomo_alignment(
         tilt_angles: List[float],
         pixel_size: float,
         output_directory: Path,
-        aretomo_executable: Path,
+        aretomo_executable: Optional[Path] = None,
         local_align: Optional[bool] = False,
         target_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
@@ -43,6 +44,8 @@ def run_aretomo_alignment(
     This is useful is there is a lot of empty space at the top and bottom of your tomogram.
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
     """
+    if check_aretomo_availability() is False and aretomo_executable is None:
+        raise RuntimeError('AreTomo executable not found.')
 
     prepare_imod_directory(
         tilt_series_file=tilt_series_file,
