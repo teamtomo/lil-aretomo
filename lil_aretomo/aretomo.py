@@ -34,7 +34,7 @@ def run_aretomo_alignment(
     tilt_series_file: file containing tilt-series images
     tilt_angles: nominal stage tilt-angles from the microscope.
     pixel_size: pixel size of the tilt-series in angstroms-per-pixel
-    output_directory: tilt-series directory for IMOD.
+    output_directory: tilt-series directory.
     aretomo_executable: path to the AreTomo executable file
     (optional) local_align: carry out local tilt series alignments? Yes or no, default is no
     (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
@@ -62,7 +62,7 @@ def run_aretomo_alignment(
     
     align_tilt_series_aretomo(
         tilt_series_file=tilt_series_file,
-        imod_directory=output_directory,
+        output_directory=output_directory,
 	    binning=binning,
         aretomo_executable=aretomo_executable,
 	    nominal_rotation_angle=nominal_rotation_angle,

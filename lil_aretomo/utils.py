@@ -30,7 +30,7 @@ def prepare_output_directory(
 
 def align_tilt_series_aretomo(
         tilt_series_file: Path, 
-        imod_directory: Path, 
+        output_directory: Path, 
         binning: float,
         aretomo_executable: Path,
 	    nominal_rotation_angle: bool or float,
@@ -40,7 +40,7 @@ def align_tilt_series_aretomo(
         thickness_for_alignment: float	
 ):
     
-    output_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
+    output_file_name = Path(f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
             
 	#Run AreTomo
     aretomo_command = [
@@ -48,7 +48,7 @@ def align_tilt_series_aretomo(
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{output_file_name}', 
         '-OutBin', f'{binning}',
-        '-AngFile', f'{imod_directory}/{tilt_series_file.stem}.rawtlt',
+        '-AngFile', f'{output_directory}/{tilt_series_file.stem}.rawtlt',
         '-AlignZ', f'{thickness_for_alignment}',	
         '-VolZ', '0',
         '-OutXF', '1'
@@ -70,9 +70,9 @@ def align_tilt_series_aretomo(
     subprocess.run(aretomo_command)
 
     #Rename .tlt
-    tlt_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln.tlt')
+    tlt_file_name = Path(f'{output_directory}/{tilt_series_file.stem}_aln.tlt')
     new_tlt_stem = tlt_file_name.stem[:-4]
-    new_output_name_tlt = Path(f'{imod_directory}/{new_tlt_stem}').with_suffix('.tlt')
+    new_output_name_tlt = Path(f'{output_directory}/{new_tlt_stem}').with_suffix('.tlt')
     tlt_file_name.rename(new_output_name_tlt)
 	
 #####
@@ -81,7 +81,7 @@ def find_binning_factor(
     pixel_size: float,
     target_pixel_size: float
 ) -> int:
-    #Find closest IMOD binning to reach target pixel size
+    #Find closest binning to reach target pixel size
     factors = 2 ** np.arange(7)
     binned_pixel_sizes = factors * pixel_size
     delta_pixel = np.abs(binned_pixel_sizes - target_pixel_size)
