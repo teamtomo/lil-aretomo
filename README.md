@@ -11,3 +11,16 @@ It is recommended to install into a fresh virtual environment.
 ```sh
 pip install lil_aretomo
 ```
+
+### For developers
+
+We use pre-commit to ensure code style and formatting remains consistent.
+
+To install the package in editable mode development dependencies
+
+```sh
+pip install -e .[dev]
+pre-commit install
+```
+
+Flake8, black and isort will then run automatically on each commit.
