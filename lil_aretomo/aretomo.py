@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from .utils import (
-    prepare_output_directory,
+    prepare_alignment_directory,
     align_tilt_series_aretomo,
     find_binning_factor,
     check_aretomo_availability,
@@ -16,7 +16,7 @@ def run_aretomo_alignment(
         output_directory: Path,
         aretomo_executable: Optional[Path] = None,
         local_align: Optional[bool] = False,
-        target_pixel_size: Optional[float] = 10,	
+        target_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
         n_patches_xy: Optional[tuple[int, int]] = (5, 4),
         thickness_for_alignment: Optional[float] = 800
@@ -44,7 +44,7 @@ def run_aretomo_alignment(
     if check_aretomo_availability() is False and aretomo_executable is None:
         raise RuntimeError('AreTomo executable not found.')
 
-    tilt_series_file=tilt_series_file = prepare_output_directory(
+    tilt_series_file = prepare_alignment_directory(
         tilt_series_file=tilt_series_file,
         tilt_angles=tilt_angles,
         output_directory=output_directory
@@ -58,10 +58,10 @@ def run_aretomo_alignment(
     align_tilt_series_aretomo(
         tilt_series_file=tilt_series_file,
         output_directory=output_directory,
-	    binning=binning,
+        binning=binning,
         aretomo_executable=aretomo_executable,
         nominal_rotation_angle=nominal_rotation_angle,
         local_align=local_align,
         n_patches_xy=n_patches_xy,
-        thickness_for_alignment=thickness_for_alignment	
+        thickness_for_alignment=thickness_for_alignment
     )
