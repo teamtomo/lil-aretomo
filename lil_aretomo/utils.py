@@ -1,8 +1,8 @@
 import os
+import shutil
 import subprocess
-import tempfile
 from pathlib import Path
-from typing import List, Dict
+from typing import List
 
 import numpy as np
 
@@ -33,40 +33,39 @@ def align_tilt_series_aretomo(
         output_directory: Path, 
         binning: float,
         aretomo_executable: Path,
-	    nominal_rotation_angle: bool or float,
+        nominal_rotation_angle: bool or float,
         local_align: bool,
-        n_patches_xy: tuple[int,int],
+        n_patches_xy: tuple[int, int],
         correct_tilt_angle_offset: bool,
-        thickness_for_alignment: float	
-):
-    
+        thickness_for_alignment: float
+):    
     output_file_name = Path(f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
             
 	#Run AreTomo
     aretomo_command = [
         f'{str(aretomo_executable)}',
         '-InMrc', f'{tilt_series_file}',
-        '-OutMrc', f'{output_file_name}', 
+        '-OutMrc', f'{output_file_name}',
         '-OutBin', f'{binning}',
         '-AngFile', f'{output_directory}/{tilt_series_file.stem}.rawtlt',
         '-AlignZ', f'{thickness_for_alignment}',	
         '-VolZ', '0',
         '-OutXF', '1'
     ]
-    
+
     if not nominal_rotation_angle == None:
         aretomo_command.append('-TiltAxis')
         aretomo_command.append(f'{nominal_rotation_angle}')
-    
+
     if local_align:
         aretomo_command.append('-Patch')
         aretomo_command.append(f'{n_patches_xy[0]}')
         aretomo_command.append(f'{n_patches_xy[1]}')
-    
+
     if correct_tilt_angle_offset:
         aretomo_command.append('-TiltCor')
         aretomo_command.append('1')
-        
+
     subprocess.run(aretomo_command)
 
     #Rename .tlt
@@ -74,21 +73,19 @@ def align_tilt_series_aretomo(
     new_tlt_stem = tlt_file_name.stem[:-4]
     new_output_name_tlt = Path(f'{output_directory}/{new_tlt_stem}').with_suffix('.tlt')
     tlt_file_name.rename(new_output_name_tlt)
-	
-#####
+
 
 def find_binning_factor(
-    pixel_size: float,
-    target_pixel_size: float
+        pixel_size: float,
+        target_pixel_size: float
 ) -> int:
     #Find closest binning to reach target pixel size
     factors = 2 ** np.arange(7)
     binned_pixel_sizes = factors * pixel_size
     delta_pixel = np.abs(binned_pixel_sizes - target_pixel_size)
     binning = factors[np.argmin(delta_pixel)]
-    return binning	
+    return binning
 
-#####
 
 def force_symlink(src: Path, link_name: Path):
     """Force creation of a symbolic link, removing any existing file."""
@@ -97,5 +94,6 @@ def force_symlink(src: Path, link_name: Path):
     os.symlink(src, link_name)
 
 
-
-
+def check_aretomo_availability():
+    """Check for an installation of AreTomo on the PATH."""
+    return shutil.which('AreTomo') is not None
