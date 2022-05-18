@@ -49,7 +49,7 @@ def run_aretomo_alignment(
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
     """
 
-    prepare_output_directory(
+    tilt_series_file = prepare_output_directory(
         tilt_series_file=tilt_series_file,
         tilt_angles=tilt_angles,
         output_directory=output_directory

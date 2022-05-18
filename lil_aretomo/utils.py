@@ -13,14 +13,18 @@ def prepare_output_directory(
 ):
     ts_dir_name = tilt_series_file.stem
     output_directory.mkdir(exist_ok=True, parents=True)
-
+    
+    #Rename input
+    tilt_series_file = tilt_series_file.rename(tilt_series_file.with_suffix('.mrc'))
+    
     # Link tilt-series file into output directory
-    tilt_series_filename = tilt_series_file.with_suffix('.mrc').name
+    tilt_series_filename = tilt_series_file.name
     linked_tilt_series_file = output_directory / tilt_series_filename
     force_symlink(tilt_series_file.absolute(), linked_tilt_series_file)
 
     rawtlt_file = output_directory / f'{ts_dir_name}.rawtlt'
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
+    return linked_tilt_series_file
     
 #####
 
@@ -35,10 +39,6 @@ def align_tilt_series_aretomo(
         correct_tilt_angle_offset: bool,
         thickness_for_alignment: float	
 ):
-        
-    #Rename file .mrc if .st    
-    if tilt_series_file.suffix == '.st':
-         tilt_series_file = tilt_series_file.with_suffix('.mrc')
     
     output_file_name = Path(f'{imod_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
             
