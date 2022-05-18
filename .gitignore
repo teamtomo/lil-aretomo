@@ -10,3 +10,4 @@ test/
 *__pycache__*
 dist
 dist/*
+lil_aretomo/_version.py
