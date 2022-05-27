@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List, Optional
+from rich.console import Console
 
 from .utils import (
     prepare_alignment_directory,
@@ -8,6 +9,7 @@ from .utils import (
     check_aretomo_availability,
 )
 
+console = Console(record=True)
 
 def run_aretomo_alignment(
         tilt_series_file: Path,
@@ -30,7 +32,7 @@ def run_aretomo_alignment(
     tilt_angles: nominal stage tilt-angles from the microscope.
     pixel_size: pixel size of the tilt-series in angstroms-per-pixel
     output_directory: tilt-series directory.
-    aretomo_executable: path to the AreTomo executable file
+    (optional) aretomo_executable: path to the AreTomo executable file
     (optional) local_align: carry out local tilt series alignments? Yes or no, default is no
     (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
     (optional) nominal_rotation_angle: initial estimate for the rotation angle of the tilt
@@ -42,7 +44,9 @@ def run_aretomo_alignment(
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
     """
     if check_aretomo_availability() is False and aretomo_executable is None:
-        raise RuntimeError('AreTomo executable not found.')
+        e = 'AreTomo executable not found. Load AreTomo, or provide the path to the executable in the options.'
+        console.log(f'ERROR: {e}')
+        raise RuntimeError(e)
 
     tilt_series_file = prepare_alignment_directory(
         tilt_series_file=tilt_series_file,
