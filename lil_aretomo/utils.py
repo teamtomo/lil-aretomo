@@ -50,7 +50,7 @@ def align_tilt_series_aretomo(
         '-OutXF', '1'
     ]
 
-    if not nominal_rotation_angle == None:
+    if nominal_rotation_angle is not None:
         command.append('-TiltAxis')
         command.append(f'{nominal_rotation_angle}')
 
