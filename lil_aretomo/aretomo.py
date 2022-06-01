@@ -21,7 +21,8 @@ def run_aretomo_alignment(
         target_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
         n_patches_xy: Optional[tuple[int, int]] = (5, 4),
-        thickness_for_alignment: Optional[float] = 800
+        thickness_for_alignment: Optional[float] = 800,
+        correct_tilt_angle_offset: Optional[bool] = False	
 ):
     """Run aretomo alignment on a single tilt-series
     
@@ -42,6 +43,8 @@ def run_aretomo_alignment(
     (optional) thickness_for_alignment: thickness in Z in unbinned pixels for which AreTomo will use in the alignment.
     This is useful is there is a lot of empty space at the top and bottom of your tomogram.
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
+    (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
+    Default is no. See AreTomo manual for full explanation: yes; adds the -TiltCor 1 argument
     """
     if check_aretomo_availability() is False:
         e = 'AreTomo is not available for use. Load AreTomo so it can be called from the terminal via: AreTomo.'
@@ -67,5 +70,6 @@ def run_aretomo_alignment(
         nominal_rotation_angle=nominal_rotation_angle,
         local_alignments=local_align,
         n_patches_xy=n_patches_xy,
-        thickness_for_alignment=thickness_for_alignment
+        thickness_for_alignment=thickness_for_alignment,
+        correct_tilt_angle_offset=correct_tilt_angle_offset
     )

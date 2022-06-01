@@ -33,7 +33,8 @@ def align_tilt_series_aretomo(
         nominal_rotation_angle: bool or float,
         local_alignments: bool,
         n_patches_xy: tuple[int, int],
-        thickness_for_alignment: float
+        thickness_for_alignment: float,
+        correct_tilt_angle_offset: bool
 ):
     output_file_name = Path(
         f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
@@ -59,6 +60,10 @@ def align_tilt_series_aretomo(
         command.append('-Patch')
         command.append(f'{n_patches_xy[0]}')
         command.append(f'{n_patches_xy[1]}')
+
+    if correct_tilt_angle_offset:
+        command.append('-TiltCor')
+        command.append('1')
 
     subprocess.run(command)
 
