@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 
@@ -32,7 +32,7 @@ def align_tilt_series_aretomo(
         aretomo_executable: Path,
         nominal_rotation_angle: bool or float,
         local_alignments: bool,
-        n_patches_xy: tuple[int, int],
+        n_patches_xy: Tuple[int, int],
         thickness_for_alignment: float,
         correct_tilt_angle_offset: bool
 ):
