@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from rich.console import Console
 
 from .utils import (
@@ -20,7 +20,7 @@ def run_aretomo_alignment(
         local_align: Optional[bool] = False,
         target_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
-        n_patches_xy: Optional[tuple[int, int]] = (5, 4),
+        n_patches_xy: Optional[Tuple[int, int]] = (5, 4),
         thickness_for_alignment: Optional[float] = 800,
         correct_tilt_angle_offset: Optional[bool] = False	
 ):
