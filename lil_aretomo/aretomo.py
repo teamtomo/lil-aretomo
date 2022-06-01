@@ -65,7 +65,7 @@ def run_aretomo_alignment(
         binning=binning,
         aretomo_executable=aretomo_executable,
         nominal_rotation_angle=nominal_rotation_angle,
-        local_align=local_align,
+        local_alignments=local_align,
         n_patches_xy=n_patches_xy,
         thickness_for_alignment=thickness_for_alignment
     )

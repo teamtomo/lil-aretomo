@@ -31,7 +31,7 @@ def align_tilt_series_aretomo(
         binning: float,
         aretomo_executable: Path,
         nominal_rotation_angle: bool or float,
-        local_align: bool,
+        local_alignments: bool,
         n_patches_xy: tuple[int, int],
         thickness_for_alignment: float
 ):
@@ -54,7 +54,7 @@ def align_tilt_series_aretomo(
         command.append('-TiltAxis')
         command.append(f'{nominal_rotation_angle}')
 
-    if local_align:
+    if local_alignments is True:
         command.append('-Patch')
         command.append(f'{n_patches_xy[0]}')
         command.append(f'{n_patches_xy[1]}')
