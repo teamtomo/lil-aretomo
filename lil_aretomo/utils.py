@@ -47,7 +47,8 @@ def align_tilt_series_aretomo(
         '-AngFile', f'{output_directory}/{tilt_series_file.stem}.rawtlt',
         '-AlignZ', f'{thickness_for_alignment}',
         '-VolZ', '0',
-        '-OutXF', '1'
+        '-OutXF', '1',
+        '-DarkTol', '0.01',
     ]
 
     if nominal_rotation_angle is not None:
