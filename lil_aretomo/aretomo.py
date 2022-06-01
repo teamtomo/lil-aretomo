@@ -43,8 +43,8 @@ def run_aretomo_alignment(
     This is useful is there is a lot of empty space at the top and bottom of your tomogram.
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
     """
-    if check_aretomo_availability() is False and aretomo_executable is None:
-        e = 'AreTomo executable not found. Load AreTomo, or provide the path to the executable in the options.'
+    if check_aretomo_availability() is False:
+        e = 'AreTomo is not available for use. Load AreTomo so it can be called from the terminal via: AreTomo.'
         console.log(f'ERROR: {e}')
         raise RuntimeError(e)
 
@@ -58,7 +58,7 @@ def run_aretomo_alignment(
         pixel_size=pixel_size,
         target_pixel_size=target_pixel_size
     )
-
+    
     align_tilt_series_aretomo(
         tilt_series_file=tilt_series_file,
         output_directory=output_directory,
