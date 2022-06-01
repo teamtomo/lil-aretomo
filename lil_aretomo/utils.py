@@ -38,9 +38,9 @@ def align_tilt_series_aretomo(
     output_file_name = Path(
         f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
 
-    # Run AreTomo
-    aretomo_command = [
-        f'{str(aretomo_executable)}',
+    aretomo = 'AreTomo' if aretomo_executable is None else str(aretomo_executable)
+    command = [
+        f'{aretomo}',
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{output_file_name}',
         '-OutBin', f'{binning}',
@@ -51,15 +51,15 @@ def align_tilt_series_aretomo(
     ]
 
     if not nominal_rotation_angle == None:
-        aretomo_command.append('-TiltAxis')
-        aretomo_command.append(f'{nominal_rotation_angle}')
+        command.append('-TiltAxis')
+        command.append(f'{nominal_rotation_angle}')
 
     if local_align:
-        aretomo_command.append('-Patch')
-        aretomo_command.append(f'{n_patches_xy[0]}')
-        aretomo_command.append(f'{n_patches_xy[1]}')
+        command.append('-Patch')
+        command.append(f'{n_patches_xy[0]}')
+        command.append(f'{n_patches_xy[1]}')
 
-    subprocess.run(aretomo_command)
+    subprocess.run(command)
 
     # Rename .tlt
     tlt_file_name = Path(f'{output_directory}/{tilt_series_file.stem}_aln.tlt')
