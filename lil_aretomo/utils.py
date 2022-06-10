@@ -33,7 +33,7 @@ def align_tilt_series_aretomo(
         nominal_rotation_angle: bool or float,
         local_alignments: bool,
         n_patches_xy: Tuple[int, int],
-        thickness_for_alignment: float,
+        thickness_for_alignment: int,
         correct_tilt_angle_offset: bool
 ):
     output_file_name = Path(
@@ -96,3 +96,10 @@ def force_symlink(src: Path, link_name: Path):
 def check_aretomo_availability():
     """Check for an installation of AreTomo on the PATH."""
     return shutil.which('AreTomo') is not None
+    
+def thickness_ang2pix(
+        pixel_size: float,
+        thickness_for_alignment: float
+    ) -> int:
+    thickness_for_alignment = round(thickness_for_alignment / pixel_size)
+    return thickness_for_alignment

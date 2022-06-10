@@ -7,6 +7,7 @@ from .utils import (
     align_tilt_series_aretomo,
     find_binning_factor,
     check_aretomo_availability,
+    thickness_ang2pix,
 )
 
 console = Console(record=True)
@@ -21,7 +22,7 @@ def run_aretomo_alignment(
         target_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
         n_patches_xy: Optional[Tuple[int, int]] = (5, 4),
-        thickness_for_alignment: Optional[float] = 800,
+        thickness_for_alignment: Optional[float] = 1500,
         correct_tilt_angle_offset: Optional[bool] = False	
 ):
     """Run aretomo alignment on a single tilt-series
@@ -40,9 +41,9 @@ def run_aretomo_alignment(
     axis. AreTomo does not need this information but it might help.
     (optional) n_patches_xy: if local_align is True, AreTomo will carry out patch tracking. 
     Specify the number of patches in X and Y here as tuple. Default is 5 in X,4 in Y.
-    (optional) thickness_for_alignment: thickness in Z in unbinned pixels for which AreTomo will use in the alignment.
+    (optional) thickness_for_alignment: thickness in Z in Ang for which AreTomo will use in the alignment.
     This is useful is there is a lot of empty space at the top and bottom of your tomogram.
-    See AreTomo manual for full explanation: this sets -AlignZ. Default is 800.
+    See AreTomo manual for full explanation: this sets -AlignZ. Default is 1500.
     (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
     Default is no. See AreTomo manual for full explanation: yes; adds the -TiltCor 1 argument
     """
@@ -62,6 +63,11 @@ def run_aretomo_alignment(
         target_pixel_size=target_pixel_size
     )
     
+    thickness_for_alignment = thickness_ang2pix(
+        pixel_size=pixel_size,
+        thickness_for_alignment=thickness_for_alignment
+    )
+        	
     align_tilt_series_aretomo(
         tilt_series_file=tilt_series_file,
         output_directory=output_directory,
