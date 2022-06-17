@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple
 from rich.console import Console
 
-from .utils import (
+from utils import (
     prepare_alignment_directory,
     align_tilt_series_aretomo,
     find_binning_factor,
