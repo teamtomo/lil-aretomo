@@ -6,7 +6,6 @@ from typing import List, Tuple
 
 import numpy as np
 
-
 def prepare_alignment_directory(
         tilt_series_file: Path,
         tilt_angles: List[float],
@@ -68,7 +67,8 @@ def align_tilt_series_aretomo(
 
     if gpu_id is not None:
         command.append('-Gpu')
-        command.append(f'{gpu_id}')
+        for gpu in gpu_id:
+            command.append(f'{gpu}')
 
     subprocess.run(command)
 
@@ -108,3 +108,9 @@ def thickness_ang2pix(
     ) -> int:
     thickness_for_alignment = round(thickness_for_alignment / pixel_size)
     return thickness_for_alignment
+
+def simplify_gpu_string(
+        gpu_id: str
+    ) -> str:
+    """Convert GPU  ID input from colon spaced (1:2:3) to no space inbetween GPU IDs (123)"""
+    return gpu_id.replace(':','')
