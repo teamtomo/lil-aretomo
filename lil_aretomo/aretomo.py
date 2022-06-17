@@ -23,7 +23,8 @@ def run_aretomo_alignment(
         nominal_rotation_angle: Optional[float] = None,
         n_patches_xy: Optional[Tuple[int, int]] = (5, 4),
         thickness_for_alignment: Optional[float] = 1500,
-        correct_tilt_angle_offset: Optional[bool] = False	
+        correct_tilt_angle_offset: Optional[bool] = False,
+        gpu_id: Optional[str] = None	
 ):
     """Run aretomo alignment on a single tilt-series
     
@@ -35,7 +36,7 @@ def run_aretomo_alignment(
     pixel_size: pixel size of the tilt-series in angstroms-per-pixel
     output_directory: tilt-series directory.
     (optional) aretomo_executable: path to the AreTomo executable file
-    (optional) local_align: carry out local tilt series alignments? Yes or no, default is no
+    (optional) local_align: carry out local tilt series alignments? Yes or no, default is no. 
     (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
     (optional) nominal_rotation_angle: initial estimate for the rotation angle of the tilt
     axis. AreTomo does not need this information but it might help.
@@ -46,6 +47,7 @@ def run_aretomo_alignment(
     See AreTomo manual for full explanation: this sets -AlignZ. Default is 1500.
     (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
     Default is no. See AreTomo manual for full explanation: yes; adds the -TiltCor 1 argument
+    (optional) gpu_id: If you wish to run in parallel over multiple GPUs, enter GPU IDs with spaces in between. e.g. 0 1 2 3
     """
     if check_aretomo_availability() is False:
         e = 'AreTomo is not available for use. Load AreTomo so it can be called from the terminal via: AreTomo.'
@@ -77,5 +79,6 @@ def run_aretomo_alignment(
         local_alignments=local_align,
         n_patches_xy=n_patches_xy,
         thickness_for_alignment=thickness_for_alignment,
-        correct_tilt_angle_offset=correct_tilt_angle_offset
+        correct_tilt_angle_offset=correct_tilt_angle_offset,
+        gpu_id=gpu_id
     )

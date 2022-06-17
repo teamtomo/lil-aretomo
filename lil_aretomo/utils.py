@@ -34,7 +34,8 @@ def align_tilt_series_aretomo(
         local_alignments: bool,
         n_patches_xy: Tuple[int, int],
         thickness_for_alignment: int,
-        correct_tilt_angle_offset: bool
+        correct_tilt_angle_offset: bool,
+        gpu_id: None or str
 ):
     output_file_name = Path(
         f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
@@ -64,6 +65,10 @@ def align_tilt_series_aretomo(
     if correct_tilt_angle_offset:
         command.append('-TiltCor')
         command.append('1')
+
+    if gpu_id is not None:
+        command.append('-Gpu')
+        command.append(f'{gpu_id}')
 
     subprocess.run(command)
 
