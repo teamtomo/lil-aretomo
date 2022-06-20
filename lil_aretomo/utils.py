@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, List
 
 import numpy as np
 
@@ -34,7 +34,7 @@ def align_tilt_series_aretomo(
         n_patches_xy: Tuple[int, int],
         thickness_for_alignment: int,
         correct_tilt_angle_offset: bool,
-        gpu_id: None or str
+        gpu_ids: None or Tuple[int,...]
 ):
     output_file_name = Path(
         f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
@@ -65,9 +65,9 @@ def align_tilt_series_aretomo(
         command.append('-TiltCor')
         command.append('1')
 
-    if gpu_id is not None:
+    if gpu_ids is not None:
         command.append('-Gpu')
-        for gpu in gpu_id:
+        for gpu in gpu_ids:
             command.append(f'{gpu}')
 
     subprocess.run(command)
@@ -108,9 +108,3 @@ def thickness_ang2pix(
     ) -> int:
     thickness_for_alignment = round(thickness_for_alignment / pixel_size)
     return thickness_for_alignment
-
-def simplify_gpu_string(
-        gpu_id: str
-    ) -> str:
-    """Convert GPU  ID input from colon spaced (1:2:3) to no space inbetween GPU IDs (123)"""
-    return gpu_id.replace(':','')
