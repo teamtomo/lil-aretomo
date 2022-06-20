@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Tuple, List
+from typing import List, Optional, Tuple
 from rich.console import Console
 
 from .utils import (
