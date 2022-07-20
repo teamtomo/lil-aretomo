@@ -49,7 +49,7 @@ def align_tilt_series_aretomo(
         '-AlignZ', f'{thickness_for_alignment}',
         '-VolZ', '0',
         '-OutXF', '1',
-        '-DarkTol', '0.01',
+        '-DarkTol', '0.01',  # this ensures bad images are not automatically removed
     ]
 
     if nominal_rotation_angle is not None:
