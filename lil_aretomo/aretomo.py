@@ -13,9 +13,10 @@ from .utils import (
 console = Console(record=True)
 
 def run_aretomo_alignment(
-        tilt_series_file: Path,
+        tilt_series: np.ndarray,
         tilt_angles: List[float],
         pixel_size: float,
+        basename: str,
         output_directory: Path,
         aretomo_executable: Optional[Path] = None,
         local_align: Optional[bool] = False,
@@ -31,10 +32,11 @@ def run_aretomo_alignment(
     Parameters
     ----------
     
-    tilt_series_file: file containing tilt-series images
+    tilt_series: (n, y, x) array of tilt-images.
     tilt_angles: nominal stage tilt-angles from the microscope.
     pixel_size: pixel size of the tilt-series in angstroms-per-pixel
     output_directory: tilt-series directory.
+    basename: basename for files in output directory.
     (optional) aretomo_executable: path to the AreTomo executable file
     (optional) local_align: carry out local tilt series alignments? Yes or no, default is no. 
     (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
@@ -57,7 +59,8 @@ def run_aretomo_alignment(
     tilt_series_file = prepare_alignment_directory(
         tilt_series_file=tilt_series_file,
         tilt_angles=tilt_angles,
-        output_directory=output_directory
+        basename=basename,
+        output_directory=output_directory,
     )
 
     binning = find_binning_factor(

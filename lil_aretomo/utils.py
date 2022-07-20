@@ -5,27 +5,28 @@ from pathlib import Path
 from typing import List, Tuple
 
 import numpy as np
+import mrcfile
 
 def prepare_alignment_directory(
-        tilt_series_file: Path,
+        output_directory: Path,
+        tilt_series: np.ndarray,
         tilt_angles: List[float],
-        output_directory: Path
+        basename: str
 ):
     output_directory.mkdir(exist_ok=True, parents=True)
 
     # Establish filenames/paths
-    tilt_series_filename = tilt_series_file.with_suffix('.mrc').name
-    linked_tilt_series_file = output_directory / tilt_series_filename
-    rawtlt_file = output_directory / f'{tilt_series_file.stem}.rawtlt'
+    tilt_series_file = output_directory / f'{basename}.mrc'
+    rawtlt_file = output_directory / f'{basename}.rawtlt'
 
-    # Link tilt series into output directory and write tilt angles into text file
-    force_symlink(tilt_series_file.absolute(), linked_tilt_series_file)
+    # Write tilt-series and stage angles into output directory
+    mrcfile.write(tilt_series_file, tilt_series.astype(np.float32))
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
     return linked_tilt_series_file
 
 
 def align_tilt_series_aretomo(
-        tilt_series_file: Path,
+        tilt_series: np.ndarray,
         output_directory: Path,
         binning: float,
         aretomo_executable: Path,
