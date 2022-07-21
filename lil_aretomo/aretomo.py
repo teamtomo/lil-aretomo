@@ -20,9 +20,9 @@ def align_tilt_series_with_aretomo(
         output_directory: PathLike,
         expected_sample_thickness: int = 1500,
         do_local_alignments: bool = False,
+        n_patches_xy: Optional[Tuple[int, int]] = None,
         output_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
-        n_patches_xy: Optional[Tuple[int, int]] = None,
         correct_tilt_angle_offset: bool = False,
         gpu_ids: Optional[Sequence[int]] = None
 ):
@@ -35,17 +35,14 @@ def align_tilt_series_with_aretomo(
     pixel_size: 2D pixel spacing in Angstroms per pixel.
     basename: basename for output files.
     output_directory: directory for output files.
-    expected_sample_thickness
-    do_local_alignments
-    output_pixel_size
-    nominal_rotation_angle
-    n_patches_xy
-    correct_tilt_angle_offset
-    gpu_ids
-
-    Returns
-    -------
-
+    expected_sample_thickness: expected thickness of the sample in Angstroms.
+    do_local_alignments: flag controlling whether or not local alignments are performed.
+    output_pixel_size: pixel size of the reconstructed tomogram.
+    nominal_rotation_angle: (optional) estimate of the angle between the Y-axis and the tilt-axis.
+        CCW is positive.
+    n_patches_xy: number of patches in each dimension to use for local alignments.
+    correct_tilt_angle_offset: flag controlling whether or not to correct for sample tilt in the output.
+    gpu_ids: integer ids for GPUs on the system (zero indexed)
     """
     if check_aretomo_on_path() is False:
         raise RuntimeError("AreTomo executable was not found. \
