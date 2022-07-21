@@ -1,6 +1,6 @@
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Sequence
 
 from .utils import (
     check_aretomo_is_installed,
