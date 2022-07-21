@@ -62,6 +62,6 @@ def get_aretomo_command(
     return command
 
 
-def check_aretomo_is_installed():
+def check_aretomo_on_path():
     """Check the PATH for AreTomo."""
     return shutil.which('AreTomo') is not None

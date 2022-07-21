@@ -6,7 +6,7 @@ from typing import Optional, Tuple, Sequence
 import numpy as np
 
 from .utils import (
-    check_aretomo_is_installed,
+    check_aretomo_on_path,
     get_aretomo_command,
     prepare_output_directory,
 )
@@ -47,7 +47,7 @@ def align_tilt_series_with_aretomo(
     -------
 
     """
-    if check_aretomo_is_installed() is False:
+    if check_aretomo_on_path() is False:
         raise RuntimeError("AreTomo executable was not found. \
         Put 'AreTomo' on the PATH to proceed.")
     if do_local_alignments is True and n_patches_xy is None:
