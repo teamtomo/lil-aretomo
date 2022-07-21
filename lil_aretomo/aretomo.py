@@ -1,6 +1,9 @@
+import subprocess
 from os import PathLike
 from pathlib import Path
 from typing import List, Optional, Tuple, Sequence
+
+import numpy as np
 
 from .utils import (
     check_aretomo_is_installed,
@@ -32,7 +35,7 @@ def align_tilt_series_with_aretomo(
         raise RuntimeError('Must set n_patches_xy to perform local alignments')
     output_directory = Path(output_directory)
     tilt_series_file, tilt_angle_file = prepare_output_directory(
-        tilt_series_file=tilt_series_file,
+        tilt_series=tilt_series,
         tilt_angles=tilt_angles,
         basename=basename,
         directory=output_directory,
@@ -48,7 +51,8 @@ def align_tilt_series_with_aretomo(
         correct_tilt_angle_offset=correct_tilt_angle_offset,
         do_local_alignments=do_local_alignments,
         n_patches_xy=n_patches_xy,
-        gpu_ids=gpu_ids
+        gpu_ids=gpu_ids,
+        aretomo_executable=aretomo_executable,
     )
     with open(output_directory / 'log.txt', mode='w') as log:
         subprocess.run(command, stdout=log, stderr=log)
