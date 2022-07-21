@@ -4,8 +4,8 @@ import subprocess
 from pathlib import Path
 from typing import List, Tuple
 
-import numpy as np
 import mrcfile
+import numpy as np
 import pandas as pd
 
 
@@ -37,7 +37,7 @@ def align_tilt_series_aretomo(
         n_patches_xy: Tuple[int, int],
         thickness_for_alignment: int,
         correct_tilt_angle_offset: bool,
-        gpu_ids: None or Tuple[int,...]
+        gpu_ids: None or Tuple[int, ...]
 ):
     output_file_name = Path(
         f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
@@ -104,11 +104,12 @@ def force_symlink(src: Path, link_name: Path):
 def check_aretomo_availability():
     """Check for an installation of AreTomo on the PATH."""
     return shutil.which('AreTomo') is not None
-    
+
+
 def thickness_ang2pix(
         pixel_size: float,
         thickness_for_alignment: float
-    ) -> int:
+) -> int:
     thickness_for_alignment = round(thickness_for_alignment / pixel_size)
     return thickness_for_alignment
 
@@ -120,6 +121,6 @@ def read_aln(filename: os.PathLike) -> pd.DataFrame:
     # '#' character in header line is parsed as a column name
     # drop empty column on the far right and shift column names to the left by 1
     column_names = list(df.columns)
-    df.drop(df.columns[len(df.columns)-1], axis=1, inplace=True)
+    df.drop(df.columns[len(df.columns) - 1], axis=1, inplace=True)
     df.columns = column_names[1:]
     return df
