@@ -1,89 +1,69 @@
+import subprocess
+from os import PathLike
 from pathlib import Path
-from typing import List, Optional, Tuple
-from rich.console import Console
+from typing import Optional, Tuple, Sequence
 
 import numpy as np
 
-from .utils import (
-    prepare_alignment_directory,
-    align_tilt_series_aretomo,
-    find_binning_factor,
-    check_aretomo_availability,
-    thickness_ang2pix,
-)
+from .utils import check_aretomo_on_path, prepare_output_directory, get_aretomo_command
 
-console = Console(record=True)
 
-def run_aretomo_alignment(
+def align_tilt_series_with_aretomo(
         tilt_series: np.ndarray,
-        tilt_angles: List[float],
+        tilt_angles: Sequence[float],
         pixel_size: float,
         basename: str,
-        output_directory: Path,
-        aretomo_executable: Optional[Path] = None,
-        local_align: Optional[bool] = False,
-        target_pixel_size: Optional[float] = 10,
+        output_directory: PathLike,
+        expected_sample_thickness: int = 1500,
+        do_local_alignments: bool = False,
+        n_patches_xy: Optional[Tuple[int, int]] = None,
+        output_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
-        n_patches_xy: Optional[Tuple[int, int]] = (5, 4),
-        thickness_for_alignment: Optional[float] = 1500,
-        correct_tilt_angle_offset: Optional[bool] = False,
-        gpu_ids: Optional[Tuple[int,...]] = None	
+        correct_tilt_angle_offset: bool = False,
+        gpu_ids: Optional[Sequence[int]] = None
 ):
-    """Run aretomo alignment on a single tilt-series
-    
+    """Align a single-axis tilt-series using AreTomo.
+
     Parameters
     ----------
-    
-    tilt_series: (n, y, x) array of tilt-images.
-    tilt_angles: nominal stage tilt-angles from the microscope.
-    pixel_size: pixel size of the tilt-series in angstroms-per-pixel
-    output_directory: tilt-series directory.
-    basename: basename for files in output directory.
-    (optional) aretomo_executable: path to the AreTomo executable file
-    (optional) local_align: carry out local tilt series alignments? Yes or no, default is no. 
-    (optional) target_pixel_size: the ideal pixel size at which TSA is carried out. Default is 10A
-    (optional) nominal_rotation_angle: initial estimate for the rotation angle of the tilt
-    axis. AreTomo does not need this information but it might help.
-    (optional) n_patches_xy: if local_align is True, AreTomo will carry out patch tracking. 
-    Specify the number of patches in X and Y here as tuple. Default is 5 in X,4 in Y.
-    (optional) thickness_for_alignment: thickness in Z in Ang for which AreTomo will use in the alignment.
-    This is useful is there is a lot of empty space at the top and bottom of your tomogram.
-    See AreTomo manual for full explanation: this sets -AlignZ. Default is 1500.
-    (optional) correct_tilt_angle_offset: Apply tilt angle offset correction, yes or no.
-    Default is no. See AreTomo manual for full explanation: yes; adds the -TiltCor 1 argument
-    (optional) gpu_ids: If you wish to run in parallel over multiple GPUs, enter GPU IDs as tuple e.g. 0 1 2 3
+    tilt_series: (n, y, x) array of tilt images.
+    tilt_angles: nominal stage tilt angles.
+    pixel_size: 2D pixel spacing in Angstroms per pixel.
+    basename: basename for output files.
+    output_directory: directory for output files.
+    expected_sample_thickness: expected thickness of the sample in Angstroms.
+    do_local_alignments: flag controlling whether or not local alignments are performed.
+    output_pixel_size: pixel size of the reconstructed tomogram.
+    nominal_rotation_angle: (optional) estimate of the angle between the Y-axis and the tilt-axis.
+        CCW is positive.
+    n_patches_xy: number of patches in each dimension to use for local alignments.
+    correct_tilt_angle_offset: flag controlling whether or not to correct for sample tilt in the output.
+    gpu_ids: integer ids for GPUs on the system (zero indexed)
     """
-    if check_aretomo_availability() is False:
-        e = 'AreTomo is not available for use. Load AreTomo so it can be called from the terminal via: AreTomo.'
-        console.log(f'ERROR: {e}')
-        raise RuntimeError(e)
-
-    tilt_series_file = prepare_alignment_directory(
-        tilt_series_file=tilt_series_file,
+    if check_aretomo_on_path() is False:
+        raise RuntimeError("AreTomo executable was not found. \
+        Put 'AreTomo' on the PATH to proceed.")
+    if do_local_alignments is True and n_patches_xy is None:
+        raise RuntimeError('Must set n_patches_xy to perform local alignments')
+    output_directory = Path(output_directory)
+    tilt_series_file, tilt_angle_file = prepare_output_directory(
+        tilt_series=tilt_series,
         tilt_angles=tilt_angles,
         basename=basename,
-        output_directory=output_directory,
+        directory=output_directory,
     )
-
-    binning = find_binning_factor(
-        pixel_size=pixel_size,
-        target_pixel_size=target_pixel_size
-    )
-    
-    thickness_for_alignment = thickness_ang2pix(
-        pixel_size=pixel_size,
-        thickness_for_alignment=thickness_for_alignment
-    )
-
-    align_tilt_series_aretomo(
-        tilt_series_file=tilt_series_file,
-        output_directory=output_directory,
-        binning=binning,
-        aretomo_executable=aretomo_executable,
-        nominal_rotation_angle=nominal_rotation_angle,
-        local_alignments=local_align,
-        n_patches_xy=n_patches_xy,
-        thickness_for_alignment=thickness_for_alignment,
+    reconstruction_filename = output_directory / f'{basename}_reconstruction.mrc'
+    command = get_aretomo_command(
+        tilt_series_filename=tilt_series_file,
+        tilt_angle_filename=tilt_angle_file,
+        reconstruction_filename=reconstruction_filename,
+        nominal_tilt_axis_angle=nominal_rotation_angle,
+        expected_sample_thickness_px=int(expected_sample_thickness / pixel_size),
+        binning_factor=output_pixel_size / pixel_size,
         correct_tilt_angle_offset=correct_tilt_angle_offset,
-        gpu_ids=gpu_ids
+        do_local_alignments=do_local_alignments,
+        n_patches_xy=n_patches_xy,
+        gpu_ids=gpu_ids,
     )
+    with open(output_directory / 'log.txt', mode='w') as log:
+        subprocess.run(command, stdout=log, stderr=log)

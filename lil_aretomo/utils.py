@@ -1,117 +1,72 @@
-import os
 import shutil
-import subprocess
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Sequence
 
 import mrcfile
 import numpy as np
 import pandas as pd
 
 
-def prepare_alignment_directory(
-        output_directory: Path,
+def prepare_output_directory(
+        directory: Path,
         tilt_series: np.ndarray,
         tilt_angles: List[float],
-        basename: str
-):
-    output_directory.mkdir(exist_ok=True, parents=True)
+        basename: str,
+        pixel_size: float,
+) -> Tuple[Path, Path]:
+    """Create an output directory and write input files for AreTomo."""
+    directory.mkdir(exist_ok=True, parents=True)
 
-    # Establish filenames/paths
-    tilt_series_file = output_directory / f'{basename}.mrc'
-    rawtlt_file = output_directory / f'{basename}.rawtlt'
+    tilt_series_file = directory / f'{basename}.mrc'
+    mrcfile.write(
+        tilt_series_file,
+        tilt_series.astype(np.float32),
+        voxel_size=(pixel_size, pixel_size, 1)
+    )
 
-    # Write tilt-series and stage angles into output directory
-    mrcfile.write(tilt_series_file, tilt_series.astype(np.float32))
+    rawtlt_file = directory / f'{basename}.rawtlt'
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
-    return linked_tilt_series_file
+    
+    return tilt_series_file, rawtlt_file
 
 
-def align_tilt_series_aretomo(
-        tilt_series: np.ndarray,
-        output_directory: Path,
-        binning: float,
-        aretomo_executable: Path,
-        nominal_rotation_angle: bool or float,
-        local_alignments: bool,
-        n_patches_xy: Tuple[int, int],
-        thickness_for_alignment: int,
-        correct_tilt_angle_offset: bool,
-        gpu_ids: None or Tuple[int, ...]
-):
-    output_file_name = Path(
-        f'{output_directory}/{tilt_series_file.stem}_aln{tilt_series_file.suffix}')
-
-    aretomo = 'AreTomo' if aretomo_executable is None else str(aretomo_executable)
+def get_aretomo_command(
+        tilt_series_filename: Path,
+        tilt_angle_filename: Path,
+        reconstruction_filename: Path,
+        expected_sample_thickness_px: int,
+        binning_factor: float,
+        correct_tilt_angle_offset: bool = True,
+        nominal_tilt_axis_angle: Optional[float] = None,
+        do_local_alignments: bool = True,
+        n_patches_xy: Optional[Tuple[int, int]] = None,
+        gpu_ids: Optional[Sequence[int]] = None
+) -> List[str]:
+    """Generate a command which can be used to run AreTomo."""
     command = [
-        f'{aretomo}',
-        '-InMrc', f'{tilt_series_file}',
-        '-OutMrc', f'{output_file_name}',
-        '-OutBin', f'{binning}',
-        '-AngFile', f'{output_directory}/{tilt_series_file.stem}.rawtlt',
-        '-AlignZ', f'{thickness_for_alignment}',
-        '-VolZ', '0',
-        '-OutXF', '1',
+        'AreTomo',
+        '-InMrc', f'{tilt_series_filename}',
+        '-OutMrc', f'{reconstruction_filename}',
+        '-OutBin', f'{binning_factor:.3f}',
+        '-AngFile', f'{tilt_angle_filename}',
+        '-AlignZ', f'{expected_sample_thickness_px}',
+        '-VolZ', f'{int(1.5 * expected_sample_thickness_px)}',
         '-DarkTol', '0.01',  # this ensures bad images are not automatically removed
     ]
-
-    if nominal_rotation_angle is not None:
-        command.append('-TiltAxis')
-        command.append(f'{nominal_rotation_angle}')
-
-    if local_alignments is True:
-        command.append('-Patch')
-        command.append(f'{n_patches_xy[0]}')
-        command.append(f'{n_patches_xy[1]}')
-
-    if correct_tilt_angle_offset:
-        command.append('-TiltCor')
-        command.append('1')
-
+    if nominal_tilt_axis_angle is not None:
+        command += ['-TiltAxis', f'{nominal_tilt_axis_angle}']
+    if do_local_alignments is True:
+        command += ['-Patch', f'{n_patches_xy[0]}', f'{n_patches_xy[1]}']
+    if correct_tilt_angle_offset is True:
+        command += ['-TiltCor', '1']
     if gpu_ids is not None:
-        command.append('-Gpu')
-        for gpu in gpu_ids:
-            command.append(f'{gpu}')
-
-    subprocess.run(command)
-
-    # Rename .tlt
-    tlt_file_name = Path(f'{output_directory}/{tilt_series_file.stem}_aln.tlt')
-    new_tlt_stem = tlt_file_name.stem[:-4]
-    new_output_name_tlt = Path(f'{output_directory}/{new_tlt_stem}').with_suffix('.tlt')
-    tlt_file_name.rename(new_output_name_tlt)
+        command += ['-Gpu'] + [f'{gpu_id}' for gpu_id in gpu_ids]
+    return command
 
 
-def find_binning_factor(
-        pixel_size: float,
-        target_pixel_size: float
-) -> int:
-    # Find closest binning to reach target pixel size
-    factors = 2 ** np.arange(7)
-    binned_pixel_sizes = factors * pixel_size
-    delta_pixel = np.abs(binned_pixel_sizes - target_pixel_size)
-    binning = factors[np.argmin(delta_pixel)]
-    return binning
-
-
-def force_symlink(src: Path, link_name: Path):
-    """Force creation of a symbolic link, removing any existing file."""
-    if link_name.exists():
-        os.remove(link_name)
-    os.symlink(src, link_name)
-
-
-def check_aretomo_availability():
-    """Check for an installation of AreTomo on the PATH."""
+def check_aretomo_on_path():
+    """Check the PATH for AreTomo."""
     return shutil.which('AreTomo') is not None
-
-
-def thickness_ang2pix(
-        pixel_size: float,
-        thickness_for_alignment: float
-) -> int:
-    thickness_for_alignment = round(thickness_for_alignment / pixel_size)
-    return thickness_for_alignment
 
 
 def read_aln(filename: os.PathLike) -> pd.DataFrame:
