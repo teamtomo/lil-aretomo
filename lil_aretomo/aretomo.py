@@ -1,7 +1,7 @@
 import subprocess
 from os import PathLike
 from pathlib import Path
-from typing import List, Optional, Tuple, Sequence
+from typing import Optional, Tuple, Sequence
 
 import numpy as np
 
@@ -14,11 +14,10 @@ from .utils import (
 
 def align_tilt_series_with_aretomo(
         tilt_series: np.ndarray,
-        tilt_angles: List[float],
+        tilt_angles: Sequence[float],
         pixel_size: float,
         basename: str,
         output_directory: PathLike,
-        aretomo_executable: Optional[Path] = None,
         expected_sample_thickness: int = 1500,
         do_local_alignments: bool = False,
         output_pixel_size: Optional[float] = 10,
@@ -27,7 +26,27 @@ def align_tilt_series_with_aretomo(
         correct_tilt_angle_offset: bool = False,
         gpu_ids: Optional[Sequence[int]] = None
 ):
-    """Run AreTomo on a single tilt-series."""
+    """Align a single-axis tilt-series using AreTomo.
+
+    Parameters
+    ----------
+    tilt_series: (n, y, x) array of tilt images.
+    tilt_angles: nominal stage tilt angles.
+    pixel_size: 2D pixel spacing in Angstroms per pixel.
+    basename: basename for output files.
+    output_directory: directory for output files.
+    expected_sample_thickness
+    do_local_alignments
+    output_pixel_size
+    nominal_rotation_angle
+    n_patches_xy
+    correct_tilt_angle_offset
+    gpu_ids
+
+    Returns
+    -------
+
+    """
     if check_aretomo_is_installed() is False:
         raise RuntimeError("AreTomo executable was not found. \
         Put 'AreTomo' on the PATH to proceed.")
@@ -52,7 +71,6 @@ def align_tilt_series_with_aretomo(
         do_local_alignments=do_local_alignments,
         n_patches_xy=n_patches_xy,
         gpu_ids=gpu_ids,
-        aretomo_executable=aretomo_executable,
     )
     with open(output_directory / 'log.txt', mode='w') as log:
         subprocess.run(command, stdout=log, stderr=log)

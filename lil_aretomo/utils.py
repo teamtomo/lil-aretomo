@@ -1,6 +1,6 @@
 import shutil
 from pathlib import Path
-from typing import List, Tuple
+from typing import List, Tuple, Optional, Sequence
 
 import mrcfile
 import numpy as np
@@ -26,6 +26,7 @@ def prepare_output_directory(
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
     return tilt_series_file, rawtlt_file
 
+
 def get_aretomo_command(
         tilt_series_file: Path,
         tilt_angle_file: Path,
@@ -34,14 +35,12 @@ def get_aretomo_command(
         binning_factor: float,
         correct_tilt_angle_offset: bool = True,
         nominal_tilt_axis_angle: Optional[float] = None,
-        aretomo_executable: Optional[Path] = None,
         do_local_alignments: bool = True,
         n_patches_xy: Optional[Tuple[int, int]] = None,
         gpu_ids: Optional[Sequence[int]] = None
 ) -> List[str]:
-    executable = 'AreTomo' if aretomo_executable is None else str(aretomo_executable)
     command = [
-        f'{executable}',
+        'AreTomo',
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{reconstruction_filename}',
         '-OutBin', f'{binning_factor:.3f}',
@@ -60,6 +59,7 @@ def get_aretomo_command(
         command += ['-Gpu'] + [f'{gpu_id}' for gpu_id in gpu_ids]
     return command
 
+
 def check_aretomo_is_installed():
-    """Check for an installation of AreTomo on the PATH."""
+    """Check the PATH for AreTomo."""
     return shutil.which('AreTomo') is not None
