@@ -6,6 +6,8 @@ from typing import List, Tuple
 
 import numpy as np
 import mrcfile
+import pandas as pd
+
 
 def prepare_alignment_directory(
         output_directory: Path,
@@ -109,3 +111,15 @@ def thickness_ang2pix(
     ) -> int:
     thickness_for_alignment = round(thickness_for_alignment / pixel_size)
     return thickness_for_alignment
+
+
+def read_aln(filename: os.PathLike) -> pd.DataFrame:
+    """Read an AreTomo .aln file"""
+    df = pd.read_csv(filename, header='infer', skiprows=2, delimiter=r'\s+')
+
+    # '#' character in header line is parsed as a column name
+    # drop empty column on the far right and shift column names to the left by 1
+    column_names = list(df.columns)
+    df.drop(df.columns[len(df.columns)-1], axis=1, inplace=True)
+    df.columns = column_names[1:]
+    return df
