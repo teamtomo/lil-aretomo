@@ -5,11 +5,7 @@ from typing import Optional, Tuple, Sequence
 
 import numpy as np
 
-from .utils import (
-    check_aretomo_on_path,
-    get_aretomo_command,
-    prepare_output_directory,
-)
+from .utils import check_aretomo_on_path, prepare_output_directory, get_aretomo_command
 
 
 def align_tilt_series_with_aretomo(
