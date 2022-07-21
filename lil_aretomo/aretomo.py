@@ -61,8 +61,8 @@ def align_tilt_series_with_aretomo(
     )
     reconstruction_filename = output_directory / f'{basename}_reconstruction.mrc'
     command = get_aretomo_command(
-        tilt_series_file=tilt_series_file,
-        tilt_angle_file=tilt_angle_file,
+        tilt_series_filename=tilt_series_file,
+        tilt_angle_filename=tilt_angle_file,
         reconstruction_filename=reconstruction_filename,
         nominal_tilt_axis_angle=nominal_rotation_angle,
         expected_sample_thickness_px=int(expected_sample_thickness / pixel_size),

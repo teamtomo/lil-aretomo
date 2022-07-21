@@ -29,8 +29,8 @@ def prepare_output_directory(
 
 
 def get_aretomo_command(
-        tilt_series_file: Path,
-        tilt_angle_file: Path,
+        tilt_series_filename: Path,
+        tilt_angle_filename: Path,
         reconstruction_filename: Path,
         expected_sample_thickness_px: int,
         binning_factor: float,
@@ -40,12 +40,13 @@ def get_aretomo_command(
         n_patches_xy: Optional[Tuple[int, int]] = None,
         gpu_ids: Optional[Sequence[int]] = None
 ) -> List[str]:
+    """Generate a command which can be used to run AreTomo."""
     command = [
         'AreTomo',
-        '-InMrc', f'{tilt_series_file}',
+        '-InMrc', f'{tilt_series_filename}',
         '-OutMrc', f'{reconstruction_filename}',
         '-OutBin', f'{binning_factor:.3f}',
-        '-AngFile', f'{tilt_angle_file}',
+        '-AngFile', f'{tilt_angle_filename}',
         '-AlignZ', f'{expected_sample_thickness_px}',
         '-VolZ', f'{int(1.5 * expected_sample_thickness_px)}',
         '-DarkTol', '0.01',  # this ensures bad images are not automatically removed
