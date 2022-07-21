@@ -13,6 +13,7 @@ def prepare_output_directory(
         basename: str,
         pixel_size: float,
 ) -> Tuple[Path, Path]:
+    """Create an output directory and write input files for AreTomo."""
     directory.mkdir(exist_ok=True, parents=True)
 
     tilt_series_file = directory / f'{basename}.mrc'
