@@ -4,6 +4,7 @@ from typing import List, Tuple, Optional, Sequence
 
 import mrcfile
 import numpy as np
+import pandas as pd
 
 
 def prepare_output_directory(
@@ -25,6 +26,7 @@ def prepare_output_directory(
 
     rawtlt_file = directory / f'{basename}.rawtlt'
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
+    
     return tilt_series_file, rawtlt_file
 
 
@@ -65,3 +67,15 @@ def get_aretomo_command(
 def check_aretomo_on_path():
     """Check the PATH for AreTomo."""
     return shutil.which('AreTomo') is not None
+
+
+def read_aln(filename: os.PathLike) -> pd.DataFrame:
+    """Read an AreTomo .aln file"""
+    df = pd.read_csv(filename, header='infer', skiprows=2, delimiter=r'\s+')
+
+    # '#' character in header line is parsed as a column name
+    # drop empty column on the far right and shift column names to the left by 1
+    column_names = list(df.columns)
+    df.drop(df.columns[len(df.columns) - 1], axis=1, inplace=True)
+    df.columns = column_names[1:]
+    return df
