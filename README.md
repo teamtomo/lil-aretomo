@@ -15,11 +15,11 @@ pip install lil_aretomo
 ```python
 import numpy as np
 import mrcfile
-from lil_aretomo import align_tilt_series_with_aretomo
+from lil_aretomo import align_tilt_series
 
 tilt_series = mrcfile.read('my_tilt_series.mrc')
 
-align_tilt_series_with_aretomo(
+align_tilt_series(
     tilt_series=tilt_series,
     tilt_angles=np.linspace(-60, 60, 41),
     pixel_size=1.35,  # angstroms per pixel

@@ -8,7 +8,7 @@ import numpy as np
 from .utils import check_aretomo_on_path, prepare_output_directory, get_aretomo_command
 
 
-def align_tilt_series_with_aretomo(
+def align_tilt_series(
         tilt_series: np.ndarray,
         tilt_angles: Sequence[float],
         pixel_size: float,

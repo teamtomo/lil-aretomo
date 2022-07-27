@@ -2,11 +2,11 @@ from pathlib import Path
 
 import numpy as np
 
-from lil_aretomo.aretomo import align_tilt_series_with_aretomo
+from lil_aretomo.aretomo import align_tilt_series
 
 TEST_DATA_DIR = Path(__file__).parent.parent / 'test'
 
-align_tilt_series_with_aretomo(
+align_tilt_series(
     tilt_angles=np.arange(-42,51,3),
     tilt_series_file=TEST_DATA_DIR / 'TS_121.st',
     pixel_size=1.329,
