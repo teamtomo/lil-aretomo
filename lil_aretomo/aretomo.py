@@ -5,23 +5,24 @@ from typing import Optional, Tuple, Sequence
 
 import numpy as np
 
+from .output import AreTomoOutput
 from .utils import check_aretomo_on_path, prepare_output_directory, get_aretomo_command
 
 
-def align_tilt_series_with_aretomo(
+def align_tilt_series(
         tilt_series: np.ndarray,
         tilt_angles: Sequence[float],
         pixel_size: float,
         basename: str,
         output_directory: PathLike,
-        expected_sample_thickness: int = 1500,
+        sample_thickness_nanometers: float = 200,
         do_local_alignments: bool = False,
         n_patches_xy: Optional[Tuple[int, int]] = None,
         output_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
         correct_tilt_angle_offset: bool = False,
         gpu_ids: Optional[Sequence[int]] = None
-):
+) -> AreTomoOutput:
     """Align a single-axis tilt-series using AreTomo.
 
     Parameters
@@ -31,7 +32,7 @@ def align_tilt_series_with_aretomo(
     pixel_size: 2D pixel spacing in Angstroms per pixel.
     basename: basename for output files.
     output_directory: directory for output files.
-    expected_sample_thickness: expected thickness of the sample in Angstroms.
+    sample_thickness_nanometers: expected thickness of the sample in nanometers.
     do_local_alignments: flag controlling whether or not local alignments are performed.
     output_pixel_size: pixel size of the reconstructed tomogram.
     nominal_rotation_angle: (optional) estimate of the angle between the Y-axis and the tilt-axis.
@@ -50,15 +51,16 @@ def align_tilt_series_with_aretomo(
         tilt_series=tilt_series,
         tilt_angles=tilt_angles,
         basename=basename,
+        pixel_size=pixel_size,
         directory=output_directory,
     )
-    reconstruction_filename = output_directory / f'{basename}_reconstruction.mrc'
+    reconstruction_file = output_directory / f'{basename}_reconstruction.mrc'
     command = get_aretomo_command(
-        tilt_series_filename=tilt_series_file,
-        tilt_angle_filename=tilt_angle_file,
-        reconstruction_filename=reconstruction_filename,
+        tilt_series_file=tilt_series_file,
+        tilt_angle_file=tilt_angle_file,
+        reconstruction_file=reconstruction_file,
         nominal_tilt_axis_angle=nominal_rotation_angle,
-        expected_sample_thickness_px=int(expected_sample_thickness / pixel_size),
+        expected_sample_thickness_px=int((sample_thickness_nanometers * 10) // pixel_size),
         binning_factor=output_pixel_size / pixel_size,
         correct_tilt_angle_offset=correct_tilt_angle_offset,
         do_local_alignments=do_local_alignments,
@@ -67,3 +69,5 @@ def align_tilt_series_with_aretomo(
     )
     with open(output_directory / 'log.txt', mode='w') as log:
         subprocess.run(command, stdout=log, stderr=log)
+    return AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
+
