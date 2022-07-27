@@ -23,7 +23,7 @@ align_tilt_series(
     tilt_series=tilt_series,
     tilt_angles=np.linspace(-60, 60, 41),
     pixel_size=1.35,  # angstroms per pixel
-    expected_sample_thickness=2000,  # angstroms
+    sample_thickness_nanometers=2000,  # angstroms
     correct_tilt_angle_offset=True,
     basename='TS_01',  # basename for files passed to AreTomo
     output_directory='TS_01_AreTomo',

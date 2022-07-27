@@ -14,5 +14,5 @@ align_tilt_series(
     aretomo_executable='/s/ems/s/AreTomo/v1.1.0/AreTomo_1.1.0_Cuda114_03-24-2022',
     do_local_alignments=True,
     #n_patches_xy=(5,6),
-    expected_sample_thickness=600,
+    sample_thickness_nanometers=600,
 )
