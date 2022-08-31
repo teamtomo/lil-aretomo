@@ -67,7 +67,13 @@ def align_tilt_series(
         n_patches_xy=n_patches_xy,
         gpu_ids=gpu_ids,
     )
-    with open(output_directory / 'log.txt', mode='w') as log:
-        subprocess.run(command, stdout=log, stderr=log)
-    return AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
+    aretomo_output = AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
+    if aretomo_output.contains_alignment_results is True:
+        print(f'{basename} has already been aligned in {output_directory}, skipping...')
+    else:
+        with open(output_directory / 'log.txt', mode='w') as log:
+            subprocess.run(command, stdout=log, stderr=log)
+        if aretomo_output.contains_alignment_results is False:
+            raise RuntimeError(f'{basename} failed to align correctly.')
+    return aretomo_output
 

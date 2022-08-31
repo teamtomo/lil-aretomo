@@ -19,11 +19,12 @@ def prepare_output_directory(
     directory.mkdir(exist_ok=True, parents=True)
 
     tilt_series_file = directory / f'{basename}.mrc'
-    mrcfile.write(
-        tilt_series_file,
-        tilt_series.astype(np.float32),
-        voxel_size=(pixel_size, pixel_size, 1)
-    )
+    if not tilt_series_file.exists():
+        mrcfile.write(
+            tilt_series_file,
+            tilt_series.astype(np.float32),
+            voxel_size=(pixel_size, pixel_size, 1)
+        )
 
     rawtlt_file = directory / f'{basename}.rawtlt'
     np.savetxt(rawtlt_file, tilt_angles, fmt='%.2f', delimiter='')
