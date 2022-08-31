@@ -14,16 +14,18 @@ def prepare_output_directory(
         tilt_angles: List[float],
         basename: str,
         pixel_size: float,
+        skip_if_completed: bool
 ) -> Tuple[Path, Path]:
     """Create an output directory and write input files for AreTomo."""
     directory.mkdir(exist_ok=True, parents=True)
 
     tilt_series_file = directory / f'{basename}.mrc'
-    if not tilt_series_file.exists():
+    if not tilt_series_file.exists() or skip_if_completed is False:
         mrcfile.write(
             tilt_series_file,
             tilt_series.astype(np.float32),
-            voxel_size=(pixel_size, pixel_size, 1)
+            voxel_size=(pixel_size, pixel_size, 1),
+            overwrite=True
         )
 
     rawtlt_file = directory / f'{basename}.rawtlt'
