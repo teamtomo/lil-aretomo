@@ -19,7 +19,7 @@ def prepare_output_directory(
     directory.mkdir(exist_ok=True, parents=True)
 
     tilt_series_file = directory / f'{basename}.mrc'
-    data_on_disk_shape = []
+    data_on_disk_shape = None
     if tilt_series_file.exists():
         with mrcfile.open(tilt_series_file, header_only=True) as mrc:
             data_on_disk_shape = (mrc.header.nz, mrc.header.ny, mrc.header.nx)
