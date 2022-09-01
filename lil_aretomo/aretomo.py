@@ -69,7 +69,7 @@ def align_tilt_series(
         gpu_ids=gpu_ids,
     )
     aretomo_output = AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
-    if aretomo_output.contains_alignment_results is False and skip_if_completed is False:
+    if aretomo_output.contains_alignment_results is False or skip_if_completed is False:
         with open(output_directory / 'log.txt', mode='w') as log:
             subprocess.run(command, stdout=log, stderr=log)
         if aretomo_output.contains_alignment_results is False:
