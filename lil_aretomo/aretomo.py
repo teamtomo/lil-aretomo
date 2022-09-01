@@ -22,7 +22,7 @@ def align_tilt_series(
         nominal_rotation_angle: Optional[float] = None,
         correct_tilt_angle_offset: bool = False,
         gpu_ids: Optional[Sequence[int]] = None,
-        skip_if_completed: Optional[bool] = False
+        skip_if_completed: bool = False
 ) -> AreTomoOutput:
     """Align a single-axis tilt-series using AreTomo.
 
@@ -54,7 +54,6 @@ def align_tilt_series(
         basename=basename,
         pixel_size=pixel_size,
         directory=output_directory,
-        skip_if_completed=skip_if_completed
     )
     reconstruction_file = output_directory / f'{basename}_reconstruction.mrc'
     command = get_aretomo_command(
@@ -70,9 +69,7 @@ def align_tilt_series(
         gpu_ids=gpu_ids,
     )
     aretomo_output = AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
-    if aretomo_output.contains_alignment_results is True and skip_if_completed is True:
-        print(f'{basename} has already been aligned in {output_directory}, skipping...')
-    else:
+    if aretomo_output.contains_alignment_results is False and skip_if_completed is False:
         with open(output_directory / 'log.txt', mode='w') as log:
             subprocess.run(command, stdout=log, stderr=log)
         if aretomo_output.contains_alignment_results is False:

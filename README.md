@@ -27,6 +27,7 @@ align_tilt_series(
     correct_tilt_angle_offset=True,
     basename='TS_01',  # basename for files passed to AreTomo
     output_directory='TS_01_AreTomo',
+    skip_if_completed=False # set to True to skip already completed tilt series
 )
 ```
 
