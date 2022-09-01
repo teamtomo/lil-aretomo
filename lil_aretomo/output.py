@@ -17,3 +17,7 @@ class AreTomoOutput:
     @property
     def aln_file(self) -> Path:
         return self.directory / f'{self.basename}.aln'
+	
+    @property
+    def contains_alignment_results(self) -> bool:
+        return self.aln_file.exists() 

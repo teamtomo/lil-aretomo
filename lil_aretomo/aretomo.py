@@ -21,7 +21,8 @@ def align_tilt_series(
         output_pixel_size: Optional[float] = 10,
         nominal_rotation_angle: Optional[float] = None,
         correct_tilt_angle_offset: bool = False,
-        gpu_ids: Optional[Sequence[int]] = None
+        gpu_ids: Optional[Sequence[int]] = None,
+        skip_if_completed: bool = False
 ) -> AreTomoOutput:
     """Align a single-axis tilt-series using AreTomo.
 
@@ -39,7 +40,8 @@ def align_tilt_series(
         CCW is positive.
     n_patches_xy: number of patches in each dimension to use for local alignments.
     correct_tilt_angle_offset: flag controlling whether or not to correct for sample tilt in the output.
-    gpu_ids: integer ids for GPUs on the system (zero indexed)
+    gpu_ids: integer ids for GPUs on the system (zero indexed).
+    skip_if_completed: skip alignment if previous results found.
     """
     if check_aretomo_on_path() is False:
         raise RuntimeError("AreTomo executable was not found. \
@@ -67,7 +69,11 @@ def align_tilt_series(
         n_patches_xy=n_patches_xy,
         gpu_ids=gpu_ids,
     )
-    with open(output_directory / 'log.txt', mode='w') as log:
-        subprocess.run(command, stdout=log, stderr=log)
-    return AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
+    aretomo_output = AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
+    if aretomo_output.contains_alignment_results is False or skip_if_completed is False:
+        with open(output_directory / 'log.txt', mode='w') as log:
+            subprocess.run(command, stdout=log, stderr=log)
+        if aretomo_output.contains_alignment_results is False:
+            raise RuntimeError(f'{basename} failed to align correctly.')
+    return aretomo_output
 
