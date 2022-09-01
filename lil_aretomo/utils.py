@@ -19,7 +19,10 @@ def prepare_output_directory(
     directory.mkdir(exist_ok=True, parents=True)
 
     tilt_series_file = directory / f'{basename}.mrc'
-    if not tilt_series_file.exists():
+    if tilt_series_file.exists():
+        with mrcfile.open(tilt_series_file, header_only=True) as mrc:
+            data_on_disk_shape = (mrc.header.nz, mrc.header.ny, mrc.header.nx)
+    if not np.array_equal(tilt_series.shape, data_on_disk_shape):
         mrcfile.write(
             tilt_series_file,
             tilt_series.astype(np.float32),

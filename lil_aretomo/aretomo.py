@@ -40,7 +40,8 @@ def align_tilt_series(
         CCW is positive.
     n_patches_xy: number of patches in each dimension to use for local alignments.
     correct_tilt_angle_offset: flag controlling whether or not to correct for sample tilt in the output.
-    gpu_ids: integer ids for GPUs on the system (zero indexed)
+    gpu_ids: integer ids for GPUs on the system (zero indexed).
+    skip_if_completed: skip alignment if previous results found.
     """
     if check_aretomo_on_path() is False:
         raise RuntimeError("AreTomo executable was not found. \
