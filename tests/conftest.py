@@ -9,5 +9,10 @@ def test_data_dir() -> Path:
 
 
 @pytest.fixture
-def aln_file(test_data_dir) -> Path:
-    return test_data_dir / 'example.aln'
+def aln_file_v1_2_0(test_data_dir) -> Path:
+    return test_data_dir / 'example_v1_2_0.aln'
+
+
+@pytest.fixture
+def aln_file_v1_3_0(test_data_dir) -> Path:
+    return test_data_dir / 'example_v1_3_0.aln'
