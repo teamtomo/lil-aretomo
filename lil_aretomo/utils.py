@@ -79,6 +79,8 @@ def check_aretomo_on_path():
 def read_aln(filename: os.PathLike) -> pd.DataFrame:
     """Read an AreTomo .aln file"""
     df = pd.read_csv(filename, header='infer', skiprows=2, delimiter=r'\s+')
+    if 'TILT' not in df.columns:
+        df = pd.read_csv(filename, header='infer', skiprows=3, delimiter=r'\s+')
 
     # '#' character in header line is parsed as a column name
     # drop empty column on the far right and shift column names to the left by 1
