@@ -22,7 +22,8 @@ def align_tilt_series(
         nominal_rotation_angle: Optional[float] = None,
         correct_tilt_angle_offset: bool = False,
         gpu_ids: Optional[Sequence[int]] = None,
-        skip_if_completed: bool = False
+        skip_if_completed: bool = False,
+        executable: Optional[str]='AreTomo'
 ) -> AreTomoOutput:
     """Align a single-axis tilt-series using AreTomo.
 
@@ -43,7 +44,7 @@ def align_tilt_series(
     gpu_ids: integer ids for GPUs on the system (zero indexed).
     skip_if_completed: skip alignment if previous results found.
     """
-    if check_aretomo_on_path() is False:
+    if check_aretomo_on_path(executable) is False:
         raise RuntimeError("AreTomo executable was not found. \
         Put 'AreTomo' on the PATH to proceed.")
     if do_local_alignments is True and n_patches_xy is None:
@@ -68,6 +69,7 @@ def align_tilt_series(
         do_local_alignments=do_local_alignments,
         n_patches_xy=n_patches_xy,
         gpu_ids=gpu_ids,
+        executable=executable
     )
     aretomo_output = AreTomoOutput(tilt_series_file=tilt_series_file, reconstruction_file=reconstruction_file)
     if aretomo_output.contains_alignment_results is False or skip_if_completed is False:
