@@ -52,7 +52,7 @@ def get_aretomo_command(
 ) -> List[str]:
     """Generate a command which can be used to run AreTomo."""
     command = [
-        executable,
+        f'{executable}',
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{reconstruction_file}',
         '-OutBin', f'{binning_factor:.3f}',
