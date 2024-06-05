@@ -47,11 +47,12 @@ def get_aretomo_command(
         nominal_tilt_axis_angle: Optional[float] = None,
         do_local_alignments: bool = True,
         n_patches_xy: Optional[Tuple[int, int]] = None,
-        gpu_ids: Optional[Sequence[int]] = None
+        gpu_ids: Optional[Sequence[int]] = None,
+        executable: Optional[str] = 'AreTomo',
 ) -> List[str]:
     """Generate a command which can be used to run AreTomo."""
     command = [
-        'AreTomo',
+        f'{executable}',
         '-InMrc', f'{tilt_series_file}',
         '-OutMrc', f'{reconstruction_file}',
         '-OutBin', f'{binning_factor:.3f}',
@@ -71,9 +72,9 @@ def get_aretomo_command(
     return command
 
 
-def check_aretomo_on_path():
+def check_aretomo_on_path(executable: Optional[str] = 'AreTomo'):
     """Check the PATH for AreTomo."""
-    return shutil.which('AreTomo') is not None
+    return shutil.which(executable) is not None
 
 
 def read_aln(filename: os.PathLike) -> pd.DataFrame:
